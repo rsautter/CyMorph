@@ -56,4 +56,4 @@ An example is:
     smooth_degree: 0.2
 
 ## Downloading from SDSS
-To download images from SDSS, a module in Download was created. Is required a csv file.
+To download images from SDSS (without executing the pipeline), a module in Download was created (it requires a .csv file)
