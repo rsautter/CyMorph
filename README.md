@@ -1,5 +1,6 @@
 # CyMorph
-Non-parametric Morphology Pipeline
+### Non-parametric Morphology Pipeline
+This software
 
 ## Compiling
 
@@ -13,12 +14,16 @@ Single-core and single object:
 
 
     time python main.py config.ini
-Multi-core:
+MPI run:
 
 
     mpirun -np 3 python PCyMorph.py spirals30.csv
     
-    
-## Downloading from SDSS
+## Configure File
+In order to run, a config file is required (in the example the config.ini where used). To run with MPI support, the default configuration file is ParallelConfig.ini.
 
+This configuration 
+
+## Downloading from SDSS
+To download images from SDSS, a
 
