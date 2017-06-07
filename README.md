@@ -3,9 +3,10 @@ Non-parametric Morphology Pipeline
 
 ## Compiling
 
- python compile.py build_ext --inplace
- cd ..
- python compile.py build_ext --inplace
+    cd maskMaker/
+    python compile.py build_ext --inplace
+    cd ..
+    python compile.py build_ext --inplace
  
 ## Running example
 Single-core and single object:
