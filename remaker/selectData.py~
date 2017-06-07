@@ -1,0 +1,20 @@
+import csv
+import sys
+import numpy
+
+gal1 = list(csv.reader(open(sys.argv[1], "rb"), delimiter=','))
+header1 = numpy.array(gal1[0])
+gal2 = list(csv.reader(open(sys.argv[2], "rb"), delimiter=','))
+header2 = numpy.array(gal2[0])
+
+outputFile = sys.argv[3]
+
+print("F1:",sys.argv[1],"F2:",sys.argv[2],"Out:",output)
+
+id1, id2= numpy.where(map(lambda k:"id" in k, header1))[0][0],numpy.where(map(lambda k:"id" in k, header2))[0][0]
+
+outputlist = header1
+for i in range(1,len(gal1)):
+	if not(gal2[:][id2] in gal1[:][id1]):
+		
+
