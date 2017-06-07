@@ -1,2 +1,8 @@
 # CyMorph
-Non-parametric Morphology
+Non-parametric Morphology Pipeline
+
+## Compiling
+
+## Downloading from SDSS
+
+
