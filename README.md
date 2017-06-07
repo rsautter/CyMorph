@@ -4,7 +4,7 @@ This pipeline
 
 ## Requirements
  - Python 2.7
- - MPI
+ - MPI / MPI4py
  - Astropy
  - Numpy
  - SciPy
