@@ -1,0 +1,25 @@
+rsautter@Inspiron-5537:~/linux_cpy/CyMorph$ time python main.py config.ini
+1000.0
+/home/rsautter/linux_cpy/CyMorph/tests/input/elliptical_Simulated/img400_n6_re10_band_rNoise_sim_0.fits
+----- SExtractor 2.19.5 started on 2016-11-22 at 15:55:10 with 1 thread
+
+----- Measuring from: img400_n6_re10_band_rNoise_sim_0.fits
+      "Unnamed" / no ext. header / 401x401 / 32 bits (floats)
+(M+D) Background: 1000.22    RMS: 31.3141    / Threshold: 46.9711    
+      Objects: detected 2        / sextracted 1               
+
+> All done (in 0.0 s: 11283.4 lines/s , 28.1 detections/s)
+cutted/x.fit
+----- SExtractor 2.19.5 started on 2016-11-22 at 15:55:10 with 1 thread
+
+----- Measuring from: x.fit
+      "Unnamed" / no ext. header / 401x401 / 32 bits (floats)
+(M+D) Background: 1000.22    RMS: 31.3141    / Threshold: 46.9711    
+      Objects: detected 2        / sextracted 1               
+
+> All done (in 0.0 s: 11181.8 lines/s , 27.9 detections/s)
+
+real	0m17.655s
+user	0m17.036s
+sys	0m0.636s
+
