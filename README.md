@@ -21,8 +21,7 @@ MPI run:
     
 ## Configure File
 In order to run, a config file is required (in the example the config.ini where used). To run with MPI support, the default configuration file is ParallelConfig.ini.
-
-This configuration 
+This configuration file contain information about files, the imput/output, and the parameters
 
 ## Downloading from SDSS
 To download images from SDSS, a
