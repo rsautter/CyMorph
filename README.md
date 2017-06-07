@@ -1,6 +1,6 @@
 # CyMorph
 ### Non-parametric Galaxy Morphology Pipeline
-This pipeline 
+This pipeline  
 
 ## Requirements
  - Python 2.7
@@ -56,5 +56,4 @@ An example is:
     smooth_degree: 0.2
 
 ## Downloading from SDSS
-To download images from SDSS, a
-
+To download images from SDSS, a module in Download was created. Is required a csv file.
