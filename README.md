@@ -1,6 +1,5 @@
 # CyMorph
 ### Non-parametric Galaxy Morphology Pipeline
-This pipeline  
 
 ## Requirements
  - Python 2.7
