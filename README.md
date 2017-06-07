@@ -9,9 +9,15 @@ Non-parametric Morphology Pipeline
  
 ## Running example
 Single-core and single object:
+
+
     time python main.py config.ini
 Multi-core:
+
+
     mpirun -np 3 python PCyMorph.py spirals30.csv
+    
+    
 ## Downloading from SDSS
 
 
