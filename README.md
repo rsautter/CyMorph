@@ -1,6 +1,14 @@
 # CyMorph
-### Non-parametric Morphology Pipeline
-This software
+### Non-parametric Galaxy Morphology Pipeline
+This pipeline 
+
+## Requirements
+ - Python 2.7
+ - MPI
+ - Astropy
+ - Numpy
+ - SciPy
+ - Cython
 
 ## Compiling
 
