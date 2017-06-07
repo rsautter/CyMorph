@@ -16,6 +16,9 @@ This pipeline
     python compile.py build_ext --inplace
     cd ..
     python compile.py build_ext --inplace
+    
+### Paths
+There should be specified in 'cfg/paths.ini', where is/how to call R, python, and SExtractor
  
 ## Running example
 Single-core and single object:
