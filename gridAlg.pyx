@@ -295,7 +295,7 @@ cpdef float butterworth(float d,float d0,float n):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def filterButterworth2D2(float[:,:] img, float degradation, float n):
+def filterButterworth2D(float[:,:] img, float degradation, float n):
     # frac -> max smoothing at center
     cdef:
         int heigth,width,i, j, maxD0,dcut
@@ -316,52 +316,8 @@ def filterButterworth2D2(float[:,:] img, float degradation, float n):
 
     for i in range(heigth):
         for j in range(width):
-            newFreq[i][j] = freq[i][j]*butterworth(sqrt(pow(float(i)-float(heigth)/2.0,2.0)+pow(float(j)-float(width)/2.0,2.0)),d0,n)
+            newFreq[i][j] = freq[i][j]*butterworth((i*i+j*j)**0.5,d0,n)
     smoothed = numpy.real(fftpack.ifft2(fftpack.ifftshift(newFreq))).astype(numpy.float32)
-    return smoothed
-
-def coord_Map(coords, ratio,ell):
-    rho = atan2(coords[0]-ell.posy, coords[1]-ell.posx)
-    s = ell.findScale(coords[0],coords[1])
-    rho = rho-ell.angle
-    a = pi()/2.0+ell.angle
-    s = s*cos(a)*ratio+s*sin(a)
-    return ell.findPoint(s,rho)	
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
-def filterButterworth2D(float[:,:] img, float smD, float n, ell):
-    # frac -> max smoothing at center
-    cdef:
-        int heigth,width,cx,cy, i, j
-        float maxD0
-        float[:,:] smoothed
-        numpy.complex64_t[:,:]  freq
-
-    heigth,width = len(img),len(img[0])
-    cx, cy = width/2, heigth/2
-
-    smoothed = numpy.array([[0.0 for i in range(width)] for j in range(heigth)],dtype=numpy.float32)
-    for i in range(heigth):
-        for j in range(width):
-            smoothed[i][j] = img[i][j]
-            
-    #rot = rotate(img,-ell.angle*180.0/pi(), reshape=True,mode='constant',cval=numpy.mean(img))
-    ratio = int(ell.maxRad/ell.minRad)
-    #newSh = (int(ratio*len(rot[0])),len(rot[1]))
-    #print("Ratio:",ratio,newSh)
-
-    asp = geometric_transform(img,coord_Map,mode='nearest',cval=numpy.mean(img),extra_arguments=(ratio,ell)).astype(numpy.float32)
-
-
-    freq = fftpack.fft2(asp)
-    freq = fftpack.fftshift(freq)
-    maxD0 = len(img) 
-    for i in range(heigth):
-        for j in range(width):
-            freq[i][j] = freq[i][j]*butterworth(sqrt(pow(float(i)-float(heigth)/2.0,2.0)+pow(float(j)-float(width)/2.0,2.0)),smD*maxD0,n)
-    smoothed = numpy.real(fftpack.ifft2(fftpack.ifftshift(freq))).astype(numpy.float32)
     return smoothed
 
 
