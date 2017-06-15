@@ -59,7 +59,11 @@ An example is:
 The file 'optimizeIndexes.py' is a wrap that in order to determine the optimal parametrization
 
 ### Plot
-In fold 'histograms' is show an example of plotter
+In folder 'histograms' is show an example of plotter
 
 ### Downloading from SDSS
 To download images from SDSS (without executing the pipeline), a module in Download was created (it requires a .csv file)
+In order to run it:
+   
+
+    mpirun -np 2 python downloader.py test500/spirals.csv
