@@ -295,12 +295,12 @@ cpdef float butterworth(float d,float d0,float n):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def filterButterworth2D(float[:,:] img, float degradation, float n):
+def filterButterworth2D(float[:,:] img, float degradation, float n, ell):
     # frac -> max smoothing at center
     cdef:
-        int heigth,width,i, j, maxD0,dcut
+        int heigth,width,i, j, dcut
         float d0 # cutoff freq
-        float  minD0
+        float  minD0,maxD0
         float[:,:] smoothed, temp, zeros
         numpy.complex64_t[:,:] newFreq, freq
 
@@ -309,15 +309,15 @@ def filterButterworth2D(float[:,:] img, float degradation, float n):
     smoothed = numpy.array([[0.0 for i in range(width)] for j in range(heigth)],dtype=numpy.float32)
     zeros = numpy.array([[0.0 for i in range(width)] for j in range(heigth)],dtype=numpy.float32)
     temp = numpy.array([[0.0 for i in range(width)] for j in range(heigth)],dtype=numpy.float32)
-    freq =fftpack.fftshift(fftpack.fft2(img))
-    maxD0 = int(sqrt(pow(float(width),2.0)+pow(float(heigth),2.0))/4.0)    
+    freq = fftpack.fft2(img)
+    maxD0 = sqrt(pow(float(width),2.0)+pow(float(heigth),2.0))   
     d0 = float(maxD0)*degradation
     newFreq = numpy.array([[freq[j][i] for i in range(width)] for j in range(heigth)], dtype=numpy.complex64)
 
     for i in range(heigth):
         for j in range(width):
-            newFreq[i][j] = freq[i][j]*butterworth((i*i+j*j)**0.5,d0,n)
-    smoothed = numpy.real(fftpack.ifft2(fftpack.ifftshift(newFreq))).astype(numpy.float32)
+            newFreq[i][j] = freq[i][j]*butterworth(float(sqrt(pow(i-heigth/2,2.0)+pow(j-width/2,2.0))),float(d0),float(n))
+    smoothed = numpy.real(fftpack.ifft2(newFreq)).astype(numpy.float32)
     return smoothed
 
 
