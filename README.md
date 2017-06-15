@@ -27,7 +27,7 @@ Single-core and single object:
 MPI run:
 
 
-    mpirun -np 3 python PCyMorph.py spirals30.csv
+    mpirun -np 3 python PCyMorph.py test500/spirals.csv
     
 ## Configure File
 In order to run, a config file is required (in the example the config.ini where used). To run with MPI support, the default configuration file is ParallelConfig.ini.
@@ -55,8 +55,9 @@ An example is:
     smooth_degree: 0.2
 
 ## Extras
-### Optimization
-The file 'optimizeIndexes.py' is a wrap that in order to determine the optimal parametrization
+### Parametrization
+The file 'optimizeIndexes.py' is a framework for optimal parametrization, it works as a wrap to the pipeline.
+It measures the distribution distance/divergence between two known sets. It requires the data in folder 'Field/'
 
 ### Plot
 In folder 'histograms' is show an example of plotter
