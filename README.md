@@ -55,12 +55,6 @@ An example is:
     smooth_degree: 0.2
 
 ## Extras
-### Parametrization
-The file 'optimizeIndexes.py' is a framework for optimal parametrization, it works as a wrap to the pipeline.
-It measures the distribution distance/divergence between two known sets. It requires the data in folder 'Field/'
-
-### Plot
-In folder 'histograms' is show an example of plotter
 
 ### Downloading from SDSS
 To download images from SDSS (without executing the pipeline), a module in Download was created (it requires a .csv file)
@@ -68,3 +62,12 @@ In order to run it:
    
 
     mpirun -np 2 python downloader.py test500/spirals.csv
+### Data Selection
+There is an example of selection in Folder 'FilterData/' 
+
+### Parametrization
+The file 'optimizeIndexes.py' is a framework for optimal parametrization, it works as a wrap to the pipeline.
+It measures the distribution distance/divergence between two known sets. It requires the data in folder 'Field/'.
+
+### Plot
+In folder 'histograms' is show an example of plotter.
