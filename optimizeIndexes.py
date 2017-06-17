@@ -69,11 +69,7 @@ def runMetric(r1,b1,idx):
 def optimizeCN(r1,r2,nsamples,dataFile1,dataFile2, nprocess=2):
     if(nprocess<2):
         raise Exception("You must specify nprocess>1 (at least one headnode, and a worker)")
-    hellinger =[]
-    kolmogorovlist = []
-    deltalist = []
-    r1L = []
-    r2L = []
+    metrics = []
     for i in range(0,nsamples+1):
         for j in range(0,nsamples+1):
             lr1 = round(r1[0]+float(i)*(r1[1]-r1[0])/float(nsamples),4) 
@@ -111,8 +107,8 @@ def optimizeCN(r1,r2,nsamples,dataFile1,dataFile2, nprocess=2):
                 nm = runMetric("output/r1.csv","output/r2.csv","CN")
                 nm.insert(0,lr2)
                 nm.insert(0,lr1)
-                metricsS2.append(nm)
-                df = pd.DataFrame(metricsS2)
+                metrics.append(nm)
+                df = pd.DataFrame(metrics)
                 df.columns = ["r1","r2","kl1","kl2","hell","N"]
                 print(df)
                 df.to_csv("optimize/conc.csv", index=False)
