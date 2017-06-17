@@ -61,6 +61,8 @@ def runMetric(r1,b1,idx):
     bins = sorted(np.concatenate((bins1,bins2)))
     freqr, bins1,tr = plt.hist(r,bins=bins)
     freqb, bins2,tr= plt.hist(b,bins=bins)
+    freqr = freqr/sum(freqr)
+    freqb = freqb/sum(freqb)
     return [kl(freqr,freqb),kl(freqb,freqr),hellinger1(freqr,freqb),adist2(r,b)]
 
 
@@ -89,6 +91,9 @@ def optimizeCN(r1,r2,nsamples,dataFile1,dataFile2, nprocess=2):
             parser.set("Output_Configuration","SaveFigure",False)
             parser.set("Indexes_Configuration","Concentration_Distances",str(lr1)+","+str(lr2))
             parser.set("Indexes_Configuration","Concentration_Density",100)
+            parser.set("File_Configuration","cleanit",False)
+            parser.set("File_Configuration","download",False)
+            
             with open("ParallelConfig.ini","w") as cfgfile:
                 parser.write(cfgfile)
             cmd ="mpirun -np "+str(nprocess)+" PCyMorph.sh "+dataFile1
@@ -103,75 +108,20 @@ def optimizeCN(r1,r2,nsamples,dataFile1,dataFile2, nprocess=2):
             process.read()
             print("Running metrics")
             try:
-                ga, kol, delta = runGaussianMetric("output/r1.csv","output/r2.csv","CN")
-                hellinger.append(ga)
-                deltalist.append(delta)
-                kolmogorovlist.append(kol)
-                r1L.append(lr1)
-                r2L.append(lr2)
-                with open("optimize/CNoptimization.csv",'w') as o:
-                    o.write("r1,r2,hellinger,kolmogorov,delta\n")
-                    np.savetxt(o, np.array([r1L,r2L,hellinger,kolmogorovlist,deltalist]).T, delimiter=',')
-                process = os.popen("mkdir output/CNr"+str(lr1)+"r"+str(lr2))
+                nm = runMetric("output/r1.csv","output/r2.csv","CN")
+                nm.insert(0,lr2)
+                nm.insert(0,lr1)
+                metricsS2.append(nm)
+                df = pd.DataFrame(metricsS2)
+                df.columns = ["r1","r2","kl1","kl2","hell","N"]
+                print(df)
+                df.to_csv("optimize/conc.csv", index=False)
+                process = os.popen("mkdir output/Cr"+str(lr1)+"r"+str(lr2))
                 process.read()
-                process = os.popen("mv output/r1.csv output/r2.csv output/CNr"+str(lr1)+"r"+str(lr2)+"/")
+                process = os.popen("mv output/r1.csv output/r2.csv output/Cr"+str(lr1)+"r"+str(lr2)+"/")
                 process.read()
             except:
                 print("Error in Cn -> ",lr1,lr2)
-
-def optimizeGa(gaTol,gaATol,nsamples,dataFile1,dataFile2, nprocess=2):
-    if(nprocess<2):
-        raise Exception("You must specify nprocess>1 (at least one headnode, and a worker)")
-    hellinger =[]
-    kolmogorovlist = []
-    deltalist = []
-    phase = []
-    mod = []
-    for i in range(0,nsamples):
-        for j in range(0,nsamples):
-            gaMTol = round(gaTol[0]+float(i)*(gaTol[1]-gaTol[0])/float(nsamples),3) 
-            gaAngTol = round(gaATol[0]+float(j)*(gaATol[1]-gaATol[0])/float(nsamples),3) 
-            print("Starting Ga (Phase, Angular)", gaMTol,gaAngTol)
-            print("Nprocess:",nprocess)
-            parser = ConfigParser.ConfigParser()
-            parser.add_section("File_Configuration")
-            parser.add_section("Output_Configuration")
-            parser.add_section("Indexes_Configuration")
-            parser.set("File_Configuration","Indexes","Ga")
-            parser.set("Output_Configuration","Verbose",False)
-            parser.set("Output_Configuration","SaveFigure",False)
-            parser.set("Indexes_Configuration","Ga_Tolerance",gaMTol)
-            parser.set("Indexes_Configuration","Ga_Angular_Tolerance",gaAngTol)
-            parser.set("Indexes_Configuration","Ga_Position_Tolerance",0.0)
-            with open("ParallelConfig.ini","w") as cfgfile:
-                parser.write(cfgfile)
-            cmd ="mpirun -np "+str(nprocess)+" PCyMorph.sh "+dataFile1
-            process = os.popen(cmd)
-            process.read()
-            process = os.popen("mv output/result.csv output/r1.csv")
-            process.read()
-            cmd ="mpirun -np "+str(nprocess)+" PCyMorph.sh "+dataFile2
-            process = os.popen(cmd)
-            process.read()
-            process = os.popen("mv output/result.csv output/r2.csv")
-            process.read()
-            print("Running metrics")
-            try:
-                ga, kol, delta = runGaussianMetric("output/r1.csv","output/r2.csv","Ga")
-                hellinger.append(ga)
-                deltalist.append(delta)
-                kolmogorovlist.append(kol)
-                mod.append(gaMTol)
-                phase.append(gaAngTol)
-                with open("optimize/gaoptimization.csv",'w') as o:
-                    o.write("phaseT,modT,hellinger,kolmogorov,delta\n")
-                    np.savetxt(o, np.array([phase,mod,hellinger,kolmogorovlist,deltalist]).T, delimiter=',')
-                process = os.popen("mkdir output/Ga"+str(gaMTol)+"_ang"+str(gaAngTol)+"/")
-                process.read()
-                process = os.popen("mv output/r1.csv output/r2.csv output/Ga"+str(gaMTol)+"_ang"+str(gaAngTol)+"/")
-                process.read()
-            except:
-                print("Error in Ga -> ",gaMTol,gaAngTol)
 
 def runPCymorph(datafile,nprocess):
     cmd = "mpirun -np "+str(nprocess)+" PCyMorph.sh "+datafile
@@ -281,9 +231,7 @@ def optimizeSmoothness(sm,nsamples,dataFile1,dataFile2, nprocess=2):
 ##The files must already be in Field/
 if __name__ == "__main__":
     n=int(sys.argv[1])
-    #sm = [0.1,1.0],nsamples=18
-    #optimizeSmoothness(sm = [0.1,0.5],nsamples=5,dataFile1="test100/spirals100.csv",dataFile2="test100/ellipticals100.csv",nprocess=n)
-    #optimizeCN(r1 = [0.45,0.95],r2 = [0.05,0.55],nsamples=5,dataFile1="test100/spirals100.csv",dataFile2="test100/ellipticals100.csv",nprocess=n)
-    #optimizeGa(gaTol=[0.00,0.02],gaATol=[0.00,0.04],nsamples=4,dataFile1="test100/spirals100.csv",dataFile2="test100/ellipticals100.csv",nprocess=n)
-    optimizeEntropy(hm = [100,250],nsamples=15,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
-    #print(runGaussianMetric("output/ellipticals.csv","output/spirals.csv","S2"))
+    #sm = [0.1,1.0],nsamples=18 
+    #optimizeSmoothness(sm = [0.3,0.8],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
+    optimizeCN(r1 = [0.55,0.75],r2 = [0.15,0.35],nsamples=3,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
+    #optimizeEntropy(hm = [100,250],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
