@@ -54,8 +54,8 @@ def adist2(d1,d2):
 
 #python version(discrete suppervised):
 def runMetric(r1,b1,idx):
-    r = pd.read_csv(r1)[idx]
-    b = pd.read_csv(b1)[idx]
+    r = pd.read_csv(r1)[idx].dropna()
+    b = pd.read_csv(b1)[idx].dropna()
     freqr, bins1,tr = plt.hist(r,bins=10)
     freqb, bins2,tr = plt.hist(b,bins=10)
     bins = sorted(np.concatenate((bins1,bins2)))
@@ -233,5 +233,5 @@ if __name__ == "__main__":
     n=int(sys.argv[1])
     #sm = [0.1,1.0],nsamples=18 
     #optimizeSmoothness(sm = [0.3,0.8],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
-    optimizeCN(r1 = [0.55,0.75],r2 = [0.15,0.35],nsamples=3,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
+    optimizeCN(r1 = [0.55,0.85],r2 = [0.15,0.45],nsamples=3,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
     #optimizeEntropy(hm = [100,250],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
