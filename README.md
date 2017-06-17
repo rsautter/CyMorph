@@ -20,11 +20,11 @@
 There should be specified in 'cfg/paths.ini', where is/how to call R, Python, and SExtractor
  
 ## Running example
-Single-core and single object (without preprocessing):
+Single-core and single object (without clipping the image):
 
 
     time python main.py config.ini
-MPI run (preprocessing Field image):
+MPI run (clipping the image):
 
 
     mpirun -np 3 python PCyMorph.py test500/spirals.csv
