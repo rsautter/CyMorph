@@ -108,10 +108,6 @@ def runIt(fileName):
             m.setSmoothnessOrder(float(configFile.get('Indexes_Configuration','butterworth_order')))
             m.setSmoothnessDegree(float(configFile.get('Indexes_Configuration','smooth_degree')))
         saveResult = ''
-        if configFile.getboolean('File_Configuration','Only_segmentation') == True :
-            m.setOnlySegmentation(1)
-        else:
-            m.setOnlySegmentation(0)
         if(configFile.getboolean('Output_Configuration','Verbose')):
             CyMorph.verbose = 1
         else:
