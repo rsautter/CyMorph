@@ -27,7 +27,7 @@ Single-core and single object (without clipping the image):
 MPI run (clipping the image):
 
 
-    mpirun -np 3 python PCyMorph.py test500/spirals.csv
+    mpirun -np 3 PCyMorph.sh test500/spirals.csv
     
 ## Configure File
 In order to run, a config file is required (in the example the config.ini where used). To run with MPI support, the default configuration file is ParallelConfig.ini.
