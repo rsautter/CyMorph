@@ -205,20 +205,21 @@ cdef class GPA:
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef void _newGa(self):
+    cdef float _newGa(self):
         if(len(self.nremovedP[0])>0):
             self.totalAssimetric = len(self.nremovedP[:,0])
         else:
             self.totalAssimetric = 0
         self.phaseDiversity = self._vectorialVariety()
         self.Ga = (float(self.totalAssimetric)/float(self.totalVet))*(2.0-self.phaseDiversity)
+        return self.Ga
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
     # This function estimates both asymmetric gradient coeficient (geometric and algebric), with the given tolerances
-    cpdef float evaluate(self,float mtol, float ftol,float ptol,float[:,:] mask):
+    cpdef float evaluate(self,float mtol, float ftol,float ptol,float[:,:] mask,bool geom=True):
         self._setGradients()
         cdef int[:] i
         cdef int x, y
@@ -236,8 +237,11 @@ cdef class GPA:
         # removes the symmetry in gradient_asymmetric_dx and gradient_asymmetric_dy:
         self._update_asymmetric_mat(mask,uniq.astype(dtype=numpy.int32), dists.astype(dtype=numpy.int32), mtol, ftol, ptol)
 
-        self._newGa()
-        return self.Ga
+        if(geom):
+            retGa = self._newGa()
+        else:
+            retGa = self.generate_triangulation_points(mtol)
+        return retGa
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

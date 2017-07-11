@@ -143,7 +143,20 @@ def asymmetryFunction(float[:,:] mat,float[:,:] mask, corrFunct, ell):
 @cython.wraparound(False)
 @cython.cdivision(True)
 def concentrationFunction(dists,concSeq, p1, p2, minCut):
-    total, cutDist = getTotalLum(dists,concSeq,1.0,minCut)
+    total, cutDist = getTotalLum(dists,concSeq,1.5,minCut)
+    rn = gridAlg.findRadiusLuminosity(dists,concSeq,total, p1)
+    rd = gridAlg.findRadiusLuminosity(dists,concSeq,total, p2)
+    
+    if(rd > 0.0):
+        return log10(rn/rd),total
+    else:
+        raise Exception("Zero Division Error in concentration!")
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def concentrationFunction2(dists,concSeq, p1, p2, minCut):
+    total = sum(concSeq)
     rn = gridAlg.findRadiusLuminosity(dists,concSeq,total, p1)
     rd = gridAlg.findRadiusLuminosity(dists,concSeq,total, p2)
     

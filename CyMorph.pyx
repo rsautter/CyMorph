@@ -348,25 +348,27 @@ cdef class CyMorph:
                             raise Exception("Unexpected Entropy value:"+str(h))
                     labels.append("H")
                     results.append(h)
-            if(self.isSetIndex("Ga")):
+            if(self.isSetIndex("Ga") or self.isSetIndex("OGa")):
                     printIfVerbose("Starting GPA")
                     gpaObject = GPA(noBCG)
                     gpaObject.setPosition(e.posx,e.posy)
                     gpaObject.r = numpy.min(numpy.array([e.maxRad, float(width)/2.0,float(heigth)/2.0]))
-                    ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=mask)
-                    if (ga>2.0) or (ga < 0.0):
-                                raise Exception('Unexpected Ga value:'+str(ga))
-                    labels.append("Ga")
-                    results.append(ga)
+
+                    if(self.isSetIndex("Ga")):
+                        ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=mask,geom=True)
+                        labels.append("Ga")
+                        results.append(ga)
                     if(self.isSetIndex("OGa")):
-                                labels.append("OGa")
-                                results.append(gpaObject.generate_triangulation_points(self.Ga_Tolerance))
+                        ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=mask,geom=False)
+                        labels.append("OGa")
+                        results.append(ga)
 
         printIfVerbose("Starting Concentartion")
         if(self.isSetIndex("C") or self.isSetIndex("C1")):
                 labels.append("C1")
                 if(self.errorVar == 1):
-                        results.append(numpy.nan)
+                        c1, total = indexes.concentrationFunction2(dists, concSeq, 0.8, 0.2, self.minCut)
+                        results.append(c1)
                 else:
                         c1, total = indexes.concentrationFunction(dists, concSeq, 0.8, 0.2, self.minCut)
                         results.append(c1)
@@ -376,7 +378,8 @@ cdef class CyMorph:
         if(self.isSetIndex("C") or self.isSetIndex("C2")):
                 labels.append("C2")
                 if(self.errorVar == 1):
-                        results.append(numpy.nan)
+                        c2, total = indexes.concentrationFunction2(dists, concSeq, 0.9, 0.5, self.minCut)
+                        results.append(c2)
                 else:
                         c2, total = indexes.concentrationFunction(dists, concSeq, 0.9, 0.5, self.minCut)
                         results.append(c2)
@@ -386,7 +389,8 @@ cdef class CyMorph:
         if (self.isSetIndex("C") or self.isSetIndex("CN")) and (self.d1>0.0) and (self.d2>0.0) and (self.d1<1.0)and (self.d2<1.0):
                 labels.append("CN")
                 if(self.errorVar == 1):
-                        results.append(numpy.nan)
+                        cn,total = indexes.concentrationFunction2(dists, concSeq, self.d1, self.d2, self.minCut)
+                        results.append(cn)
                 else:
                         cn,total = indexes.concentrationFunction(dists, concSeq, self.d1, self.d2, self.minCut)
                         results.append(cn)
@@ -427,19 +431,20 @@ cdef class CyMorph:
                         raise Exception("Unexpected Sextractor Segmentation Entropy value:"+str(sh))
                 labels.append("sH")
                 results.append(sh)
-        if(self.isSetIndex("Ga")):
+        if(self.isSetIndex("Ga") or self.isSetIndex("OGa")):
                 printIfVerbose("Starting GPA")
                 gpaObject = GPA(newMat)
                 gpaObject.setPosition(e.posx,e.posy)
                 gpaObject.r = numpy.min(numpy.array([e.maxRad, float(width)/2.0,float(heigth)/2.0]))
-                ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=segmentationMask)
-                if (ga>2.0) or (ga < 0.0):
-                            raise Exception('Unexpected Ga value:'+str(ga))
-                labels.append("sGa")
-                results.append(ga)
+                
+                if(self.isSetIndex("Ga") ):
+                        ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=segmentationMask,geom=True)
+                        labels.append("Ga")
+                        results.append(ga)
                 if(self.isSetIndex("OGa")):
-                            labels.append("OGa")
-                            results.append(gpaObject.generate_triangulation_points(self.Ga_Tolerance))   
+                        ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=segmentationMask,geom=False)
+                        labels.append("OGa")
+                        results.append(ga)
         
         labels.append("Error")
         results.append(self.errorVar)
