@@ -439,11 +439,11 @@ cdef class CyMorph:
                 
                 if(self.isSetIndex("Ga") ):
                         ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=segmentationMask,geom=True)
-                        labels.append("Ga")
+                        labels.append("sGa")
                         results.append(ga)
                 if(self.isSetIndex("OGa")):
                         ga = gpaObject.evaluate(mtol=self.Ga_Tolerance, ftol=self.Ga_Angular_Tolerance, ptol=self.Ga_Position_Tolerance,mask=segmentationMask,geom=False)
-                        labels.append("OGa")
+                        labels.append("sOGa")
                         results.append(ga)
         
         labels.append("Error")

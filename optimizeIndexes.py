@@ -170,6 +170,57 @@ def optimizeEntropy(hm,nsamples,dataFile1,dataFile2, nprocess=2):
             except:
                 print("Error in h -> ",hv)
 
+def optimizeGa(gaTol,gaATol,nsamples,dataFile1,dataFile2, nprocess=2):
+    if(nprocess<2):
+        raise Exception("You must specify nprocess>1 (at least one headnode, and a worker)")
+    metricsGa = []
+    for i in range(0,nsamples):
+        for j in range(0,nsamples):
+            gaMTol = round(gaTol[0]+float(i)*(gaTol[1]-gaTol[0])/float(nsamples),3) 
+            gaAngTol = round(gaATol[0]+float(j)*(gaATol[1]-gaATol[0])/float(nsamples),3) 
+            print("Starting Ga (Phase, Angular)", gaMTol,gaAngTol)
+            print("Nprocess:",nprocess)
+            parser = ConfigParser.ConfigParser()
+            parser.add_section("File_Configuration")
+            parser.add_section("Output_Configuration")
+            parser.add_section("Indexes_Configuration")
+            parser.set("File_Configuration","Indexes","Ga")
+            parser.set("Output_Configuration","Verbose",False)
+            parser.set("Output_Configuration","SaveFigure",False)
+            parser.set("File_Configuration","cleanit",False)
+            parser.set("Indexes_Configuration","Ga_Tolerance",gaMTol)
+            parser.set("Indexes_Configuration","Ga_Angular_Tolerance",gaAngTol)
+            parser.set("Indexes_Configuration","Ga_Position_Tolerance",0.0)
+            parser.set("File_Configuration","download",False)
+            with open("ParallelConfig.ini","w") as cfgfile:
+                parser.write(cfgfile)
+            cmd ="mpirun -np "+str(nprocess)+" PCyMorph.sh "+dataFile1
+            process = os.popen(cmd)
+            process.read()
+            process = os.popen("mv output/result.csv output/r1.csv")
+            process.read()
+            cmd ="mpirun -np "+str(nprocess)+" PCyMorph.sh "+dataFile2
+            process = os.popen(cmd)
+            process.read()
+            process = os.popen("mv output/result.csv output/r2.csv")
+            process.read()
+            print("Running metrics")
+            try:
+                nm = runMetric("output/r1.csv","output/r2.csv","sGa")
+                nm.insert(0,gaMTol)
+                nm.insert(0,gaAngTol)
+                metricsGa.append(nm)
+                df = pd.DataFrame(metricsGa)
+                df.columns = ["Angular","Mod","kl1","kl2","hell","N"]
+                print(df)
+                df.to_csv("optimize/ga.csv", index=False)
+                process = os.popen("mkdir output/Ga"+str(gaMTol)+"_"+str(gaAngTol))
+                process.read()
+                process = os.popen("mv output/r1.csv output/r2.csv output/Ga"+str(gaMTol)+"_"+str(gaAngTol)+"/")
+                process.read()
+            except:
+                print("Error in Ga -> ",gaMTol,gaAngTol)
+
 def optimizeSmoothness(sm,nsamples,dataFile1,dataFile2, nprocess=2):
     metricsS2,metricsS3 = [],[]
 
@@ -229,5 +280,6 @@ if __name__ == "__main__":
     n=int(sys.argv[1])
     #sm = [0.1,1.0],nsamples=18 
     #optimizeSmoothness(sm = [0.3,0.8],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
-    optimizeCN(r1 = [0.55,0.85],r2 = [0.15,0.45],nsamples=3,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
+    optimizeGa(gaTol=[0.00,0.02],gaATol=[0.00,0.04],nsamples=2,dataFile1="test10/spirals.csv",dataFile2="test10/ellipticals.csv",nprocess=n)
+    #optimizeCN(r1 = [0.55,0.85],r2 = [0.15,0.45],nsamples=3,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
     #optimizeEntropy(hm = [100,250],nsamples=5,dataFile1="test100/spirals.csv",dataFile2="test100/ellipticals.csv",nprocess=n)
