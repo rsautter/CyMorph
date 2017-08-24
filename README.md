@@ -11,9 +11,6 @@
 
 ## Compiling
 
-    cd maskMaker/
-    python compile.py build_ext --inplace
-    cd ..
     python compile.py build_ext --inplace
     
 ### Paths
