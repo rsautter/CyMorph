@@ -68,3 +68,6 @@ It measures the distribution distance/divergence between two known sets. It requ
 
 ### Plot
 In folder 'histograms' is show an example of plotter.
+
+### Classifier
+The script 'miner.py' (still in progress) in folder datamining test some classifiers and data balance algorithms. 
