@@ -9,6 +9,7 @@
  - Mahotas
  - SciPy
  - Cython
+ - Sextractor
 
 ## Compiling
 
