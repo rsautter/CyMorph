@@ -6,6 +6,7 @@
  - MPI / MPI4py
  - Astropy
  - Numpy
+ - Mahotas
  - SciPy
  - Cython
 
